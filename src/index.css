@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary-main-50: #F7FEE7;
+    --primary-main-100: #ECFCCB;
+    --primary-main-200: #D9F99D;
+    --primary-main-300: #BEF264;
+    --primary-main-400: #A3E635;
+    --primary-main-500: #84CC16;
+    --primary-main-600: #65A30D;
+    --primary-main-700: #4D7C0F;
+    --primary-main-800: #3F6212;
+    --primary-main-900: #365314;
+    --primary-main-950: #233311;
+    --neutral-greys-0: #FFFFFF;
+    --neutral-greys-50: #F8FAFC;
+    --neutral-greys-100: #F1F5F9;
+    --neutral-greys-200: #E2E8F0;
+    --neutral-greys-300: #CBD5E1;
+    --neutral-greys-400: #94A3B8;
+    --neutral-greys-500: #64748B;
+    --neutral-greys-600: #475569;
+    --neutral-greys-700: #334155;
+    --neutral-greys-800: #1E293B;
+    --neutral-greys-900: #0F172A;
+    --neutral-greys-950: #020617;
+    --system-success-50: #F0FDF4;
+    --system-success-500: #22C55E;
+    --system-success-950: #052E16;
+    --system-error-50: #FEF2F2;
+    --system-error-500: #EF4444;
+    --system-error-950: #450A0A;
+    --system-error-100: #b5b5b5;
+    --system-error-200: #64748b;
+    --system-error-300: #f8fafc;
+    --system-warning-50: #FFF7ED;
+    --system-warning-500: #F97316;
+    --system-warning-550: #431407;
+    --system-warning-950: #431407;
+    --neutral-greys-tooltip: rgba(241, 245, 249, 1);
+  }
+  :root:not(.dark) {
+    --primary-main-50: #233311;
+    --primary-main-100: #365314;
+    --primary-main-200: #3F6212;
+    --primary-main-300: #4D7C0F;
+    --primary-main-400: #65A30D;
+    --primary-main-500: #84CC16;
+    --primary-main-600: #A3E635;
+    --primary-main-700: #BEF264;
+    --primary-main-800: #D9F99D;
+    --primary-main-900: #ECFCCB;
+    --primary-main-950: #F7FEE7;
+    --neutral-greys-0: #010207;
+    --neutral-greys-50: #020617;
+    --neutral-greys-100: #0F172A;
+    --neutral-greys-200: #1E293B;
+    --neutral-greys-300: #334155;
+    --neutral-greys-400: #475569;
+    --neutral-greys-500: #64748B;
+    --neutral-greys-600: #94A3B8;
+    --neutral-greys-700: #CBD5E1;
+    --neutral-greys-800: #E2E8F0;
+    --neutral-greys-900: #F1F5F9;
+    --neutral-greys-950: #F8FAFC;
+    --system-success-50: #052E16;
+    --system-success-500: #22C55E;
+    --system-success-950: #F0FDF4;
+    --system-error-50: #F0FDF4;
+    --system-error-500: #EF4444;
+    --system-error-950: #FEF2F2;
+    --system-error-100: #777777;
+    --system-error-200: #475569;
+    --system-error-300: #f8fafc;
+    --system-warning-50: #431407;
+    --system-warning-500: #F97316;
+    --system-warning-550: #322527;
+    --system-warning-950: #FFF7ED;
+    --neutral-greys-tooltip: rgba(15, 32, 42, 1);
+  }
+}
