@@ -5,406 +5,479 @@ const createHotel = (
   type: "luxury" | "beach" | "mountain",
   basePrice: number
 ): Hotel => {
-  const luxuryNames = [
-    "Grand Palace Hotel",
-    "Royal Heritage Hotel",
-    "Majestic Crown Hotel",
-    "Imperial Elegance Hotel",
-    "Platinum Suites Hotel",
-    "Diamond Luxury Hotel",
-    "Golden Gate Hotel",
-    "Crystal Palace Hotel",
-    "Regent Metropolitan Hotel",
-    "Ambassador Luxury Hotel",
-    "Aristocrat Grand Hotel",
-    "Elite Crown Hotel",
-    "Prestige Palace Hotel",
-    "Sovereign Luxury Hotel",
-    "Premier Grand Hotel",
-    "Excellence Suites Hotel",
-    "Splendor Palace Hotel",
-    "Grandeur Luxury Hotel",
-    "Magnificence Hotel",
-    "Opulence Grand Hotel",
+  const names = ["The Grand Palace", "Luxury Resort", "Mountain View Lodge"];
+  const nameIndex = Math.floor(Math.random() * names.length);
+
+  const locations = [
+    {
+      street: "123 Luxury Avenue",
+      city: "New York",
+      country: "USA",
+      coordinates: { lat: 40.7128, lng: -74.006 },
+    },
+    {
+      street: "456 Beach Road",
+      city: "Miami",
+      country: "USA",
+      coordinates: { lat: 25.7617, lng: -80.1918 },
+    },
+    {
+      street: "789 Mountain Trail",
+      city: "Aspen",
+      country: "USA",
+      coordinates: { lat: 39.1911, lng: -106.8175 },
+    },
+    {
+      street: "321 Park Lane",
+      city: "London",
+      country: "UK",
+      coordinates: { lat: 51.5074, lng: -0.1278 },
+    },
+    {
+      street: "654 Alpine Street",
+      city: "Zurich",
+      country: "Switzerland",
+      coordinates: { lat: 47.3769, lng: 8.5417 },
+    },
   ];
 
-  const beachNames = [
-    "Seaside Resort & Spa",
-    "Ocean Breeze Resort",
-    "Coral Bay Resort",
-    "Sunset Beach Resort",
-    "Paradise Cove Resort",
-    "Azure Waters Resort",
-    "Tropical Palms Resort",
-    "Blue Lagoon Resort",
-    "Sandy Shores Resort",
-    "Palm Tree Resort",
-    "Emerald Bay Resort",
-    "Crystal Waters Resort",
-    "Golden Sand Resort",
-    "Turquoise Coast Resort",
-    "Seashell Resort",
-    "Wave Rider Resort",
-    "Coconut Grove Resort",
-    "Sapphire Bay Resort",
-    "Tidal Pool Resort",
-    "Marina Bay Resort",
+  const location = locations[Math.floor(Math.random() * locations.length)];
+  const priceMultiplier = 0.8 + Math.random() * 0.4; // 0.8 to 1.2
+  const discountPercent = Math.floor(Math.random() * 30) + 5; // 5% to 35%
+
+  // Optimized stable video URLs
+  const videoSet = [
+    "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
   ];
 
-  const mountainNames = [
-    "Mountain Lodge Retreat",
-    "Alpine Vista Lodge",
-    "Summit Peak Lodge",
-    "Pine Valley Lodge",
-    "Rocky Ridge Resort",
-    "Evergreen Mountain Lodge",
-    "Snow Cap Lodge",
-    "Forest Glen Resort",
-    "Highland Retreat",
-    "Cedar Mountain Lodge",
-    "Aspen Grove Lodge",
-    "Wilderness Lodge",
-    "Timberline Resort",
-    "Eagle's Nest Lodge",
-    "Glacier Point Lodge",
-    "Moonlight Lodge",
-    "Canyon View Lodge",
-    "Rustic Pine Lodge",
-    "Valley Vista Resort",
-    "Mountain Mist Lodge",
+  const imageSet = [
+    "https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
   ];
 
-  const cities = {
-    luxury: [
-      { city: "Paris", country: "France", lat: 48.8566, lng: 2.3522 },
-      { city: "London", country: "UK", lat: 51.5074, lng: -0.1278 },
-      { city: "New York", country: "USA", lat: 40.7128, lng: -74.006 },
-      { city: "Tokyo", country: "Japan", lat: 35.6762, lng: 139.6503 },
-      { city: "Dubai", country: "UAE", lat: 25.2048, lng: 55.2708 },
-    ],
-    beach: [
-      { city: "Miami", country: "USA", lat: 25.7617, lng: -80.1918 },
-      { city: "Cancun", country: "Mexico", lat: 21.1619, lng: -86.8515 },
-      { city: "Bali", country: "Indonesia", lat: -8.3405, lng: 115.092 },
-      { city: "Maldives", country: "Maldives", lat: 3.2028, lng: 73.2207 },
-      { city: "Hawaii", country: "USA", lat: 21.3099, lng: -157.8581 },
-    ],
-    mountain: [
-      { city: "Aspen", country: "USA", lat: 39.1911, lng: -106.8175 },
-      { city: "Zermatt", country: "Switzerland", lat: 45.9763, lng: 7.6586 },
-      { city: "Whistler", country: "Canada", lat: 50.1163, lng: -122.9574 },
-      { city: "Chamonix", country: "France", lat: 45.9237, lng: 6.8694 },
-      { city: "Banff", country: "Canada", lat: 51.4968, lng: -115.9281 },
-    ],
-  };
-
-  const images = {
-    luxury: [
-      "https://images.unsplash.com/photo-1618773928121-c32242e63f39?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
-      "https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&auto=format&fit=crop&w=1474&q=80",
-      "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
-      "https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1480&q=80",
-    ],
-    beach: [
-      "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
-      "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
-      "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
-      "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
-    ],
-    mountain: [
-      "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
-      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
-      "https://images.unsplash.com/photo-1585007600263-71228e40c8d1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
-      "https://images.unsplash.com/photo-1573160813959-df05c19faaed?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
-    ],
-  };
-
-  const videos = [
-    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-  ];
-
-  const nameIndex = (id - 1) % 20;
-  const locationIndex = Math.floor((id - 1) / 12) % 5;
-  const imageIndex = (id - 1) % 4;
-  const videoIndex = (id - 1) % 5;
-
-  const names =
-    type === "luxury"
-      ? luxuryNames
-      : type === "beach"
-      ? beachNames
-      : mountainNames;
-  const location = cities[type][locationIndex];
-  const imageSet = images[type];
-
-  const priceMultiplier = 1 + (Math.random() * 0.4 - 0.2); // ±20% price variation
-  const discountPercent = 15 + Math.floor(Math.random() * 25); // 15-40% discount
+  const videoIndex = Math.floor(Math.random() * videoSet.length);
+  const imageIndex = Math.floor(Math.random() * imageSet.length);
 
   return {
     id: `hotel-${id}`,
-    name: names[nameIndex],
-    address: {
-      street: `${100 + id} ${
-        type === "luxury"
-          ? "Royal Street"
-          : type === "beach"
-          ? "Ocean Drive"
-          : "Alpine Way"
-      }`,
-      city: location.city,
-      country: location.country,
-      coordinates: {
-        lat: location.lat + (Math.random() * 0.02 - 0.01), // Small random offset
-        lng: location.lng + (Math.random() * 0.02 - 0.01),
-      },
-    },
-    rating: 4.0 + Math.random() * 1.0, // 4.0-5.0 rating
-    star_rating: type === "luxury" ? 5 : type === "beach" ? 4 : 4,
+    name: `${names[nameIndex]} ${
+      type === "luxury" ? "Hotel" : type === "beach" ? "Resort" : "Lodge"
+    }`,
+    address: location,
+    rating: 3.5 + Math.random() * 1.5, // 3.5 to 5.0
+    star_rating: Math.floor(Math.random() * 3) + 3, // 3 to 5 stars
     description:
       type === "luxury"
-        ? "A luxurious hotel with world-class amenities and exceptional service in the heart of the city."
+        ? "Experience unparalleled luxury in the heart of the city. Our hotel offers world-class amenities, exceptional service, and breathtaking views."
         : type === "beach"
-        ? "Beautiful beachfront resort with stunning ocean views and world-class facilities."
-        : "Cozy mountain lodge with stunning alpine views and year-round outdoor activities.",
+        ? "Escape to paradise at our beachfront resort. Enjoy pristine beaches, crystal-clear waters, and endless sunshine."
+        : "Discover tranquility in the mountains. Our lodge offers stunning alpine views, outdoor adventures, and cozy comfort.",
     amenities:
       type === "luxury"
         ? [
-            "Free WiFi",
-            "Pool",
-            "Spa",
-            "Restaurant",
-            "Gym",
-            "Room Service",
-            "Concierge",
+            "Concierge Service",
+            "Spa & Wellness Center",
+            "Fine Dining Restaurant",
+            "Business Center",
             "Valet Parking",
+            "24/7 Room Service",
+            "Fitness Center",
+            "Conference Rooms",
           ]
         : type === "beach"
         ? [
-            "Beach Access",
-            "Pool",
-            "Spa",
-            "Restaurant",
-            "Bar",
+            "Private Beach",
+            "Swimming Pool",
             "Water Sports",
+            "Beachside Bar",
+            "Spa Services",
+            "Kids Club",
+            "Snorkeling Equipment",
             "Beach Volleyball",
-            "Snorkeling",
           ]
         : [
-            "Ski Access",
-            "Fireplace",
-            "Restaurant",
-            "Bar",
-            "Spa",
             "Hiking Trails",
+            "Ski Equipment Rental",
+            "Mountain Guides",
+            "Outdoor Fire Pit",
+            "Wellness Center",
+            "Adventure Tours",
             "Mountain Biking",
             "Hot Tub",
           ],
-    rooms: [
-      {
-        id: `room-${id}-1`,
-        name:
-          type === "luxury"
-            ? "Deluxe King Room"
-            : type === "beach"
-            ? "Ocean View Suite"
-            : "Alpine Suite",
-        description:
-          type === "luxury"
-            ? "Spacious room with king bed, city view, and marble bathroom. Perfect for business travelers."
-            : type === "beach"
-            ? "Luxurious suite with panoramic ocean views, private balcony, and premium amenities."
-            : "Rustic luxury suite with mountain views, fireplace, and premium amenities.",
-        price: {
-          original: Math.round(basePrice * priceMultiplier),
-          discounted: Math.round(
-            (basePrice * priceMultiplier * (100 - discountPercent)) / 100
-          ),
-          currency:
-            location.country === "USA"
-              ? "USD"
-              : location.country === "UK"
-              ? "GBP"
-              : "EUR",
-          discount_percentage: discountPercent,
-        },
-        amenities:
-          type === "luxury"
-            ? [
-                "Free WiFi",
-                "Air Conditioning",
-                "Minibar",
-                "Safe",
-                "TV",
-                "Coffee Machine",
-              ]
-            : type === "beach"
-            ? [
-                "Ocean View",
-                "Balcony",
-                "Free WiFi",
-                "Minibar",
-                "Safe",
-                "TV",
-                "Coffee Machine",
-              ]
-            : [
-                "Mountain View",
-                "Fireplace",
-                "Free WiFi",
-                "Minibar",
-                "Safe",
-                "TV",
-                "Balcony",
-              ],
-        capacity: {
-          adults: 2,
-          children: type === "beach" ? 2 : 1,
-        },
-        bed_type: "King Bed",
-        size: `${30 + Math.floor(Math.random() * 20)} m²`,
-        media: [
+    rooms: (() => {
+      // Define room variants for each hotel type
+      const roomVariants = {
+        luxury: [
           {
-            id: `media-${id}-1`,
-            type: "image" as const,
-            url: imageSet[imageIndex],
-            thumbnail: imageSet[imageIndex].replace("w=1470", "w=400"),
-            alt: `${names[nameIndex]} Room`,
-            title: `${names[nameIndex]} Overview`,
+            name: "Standard Room",
+            description:
+              "Comfortable room with modern amenities and city views.",
+            priceMultiple: 1.0,
+            bedType: "Queen Bed",
+            sizeRange: [25, 35],
+            capacity: { adults: 2, children: 1 },
+            amenities: [
+              "Free WiFi",
+              "Air Conditioning",
+              "TV",
+              "Safe",
+              "Minibar",
+            ],
           },
           {
-            id: `media-${id}-2`,
-            type: "video" as const,
-            url: videos[videoIndex],
-            thumbnail: imageSet[imageIndex].replace("w=1470", "w=400"),
-            alt: "Room Tour Video",
-            title: "Virtual Room Tour",
+            name: "Deluxe King Room",
+            description:
+              "Spacious room with king bed, city view, and marble bathroom. Perfect for business travelers.",
+            priceMultiple: 1.3,
+            bedType: "King Bed",
+            sizeRange: [35, 45],
+            capacity: { adults: 2, children: 2 },
+            amenities: [
+              "Free WiFi",
+              "Air Conditioning",
+              "TV",
+              "Safe",
+              "Minibar",
+              "Coffee Machine",
+            ],
           },
-          ...(Math.random() > 0.5
-            ? [
-                {
-                  id: `media-${id}-3`,
-                  type: "image" as const,
-                  url: imageSet[(imageIndex + 1) % 4],
-                  thumbnail: imageSet[(imageIndex + 1) % 4].replace(
-                    "w=1470",
-                    "w=400"
-                  ),
-                  alt: "Additional View",
-                  title: "Room Features",
-                },
-              ]
-            : []),
+          {
+            name: "Executive Suite",
+            description:
+              "Luxury suite with separate living area, panoramic city views, and premium amenities.",
+            priceMultiple: 1.8,
+            bedType: "King Bed + Sofa Bed",
+            sizeRange: [60, 80],
+            capacity: { adults: 3, children: 2 },
+            amenities: [
+              "Free WiFi",
+              "Air Conditioning",
+              "TV",
+              "Safe",
+              "Minibar",
+              "Coffee Machine",
+              "Living Area",
+              "Balcony",
+            ],
+          },
+          {
+            name: "Premium Suite",
+            description:
+              "Luxury suite with premium amenities, workspace, and butler service.",
+            priceMultiple: 2.2,
+            bedType: "King Bed + Living Area",
+            sizeRange: [80, 100],
+            capacity: { adults: 4, children: 2 },
+            amenities: [
+              "Free WiFi",
+              "Air Conditioning",
+              "TV",
+              "Safe",
+              "Premium Minibar",
+              "Butler Service",
+              "Workspace",
+              "Living Area",
+              "Premium Balcony",
+            ],
+          },
+          {
+            name: "Presidential Suite",
+            description:
+              "Ultimate luxury with multiple rooms, private dining, and concierge service.",
+            priceMultiple: 3.0,
+            bedType: "2 King Beds + Living Area",
+            sizeRange: [120, 150],
+            capacity: { adults: 6, children: 3 },
+            amenities: [
+              "Free WiFi",
+              "Air Conditioning",
+              "Multiple TVs",
+              "Safe",
+              "Premium Bar",
+              "Private Dining",
+              "Concierge Service",
+              "Multiple Balconies",
+              "Jacuzzi",
+            ],
+          },
         ],
-        cancellation_policy: `Free cancellation until ${
-          Math.random() > 0.5 ? "24" : "48"
-        } hours before check-in`,
-        availability: Math.random() > 0.1, // 90% availability
-      },
-      ...(Math.random() > 0.3
-        ? [
+        beach: [
+          {
+            name: "Garden View Room",
+            description:
+              "Comfortable room with tropical garden views and beach access.",
+            priceMultiple: 1.0,
+            bedType: "Queen Bed",
+            sizeRange: [30, 40],
+            capacity: { adults: 2, children: 2 },
+            amenities: [
+              "Beach Access",
+              "Free WiFi",
+              "Air Conditioning",
+              "TV",
+              "Safe",
+              "Minibar",
+            ],
+          },
+          {
+            name: "Ocean View Suite",
+            description:
+              "Luxurious suite with panoramic ocean views, private balcony, and premium amenities.",
+            priceMultiple: 1.4,
+            bedType: "King Bed",
+            sizeRange: [40, 50],
+            capacity: { adults: 2, children: 2 },
+            amenities: [
+              "Ocean View",
+              "Balcony",
+              "Free WiFi",
+              "Minibar",
+              "Safe",
+              "TV",
+              "Coffee Machine",
+            ],
+          },
+          {
+            name: "Beachfront Suite",
+            description:
+              "Spacious suite with direct beach access and ocean-facing terrace.",
+            priceMultiple: 1.9,
+            bedType: "King Bed + Sofa Bed",
+            sizeRange: [70, 90],
+            capacity: { adults: 4, children: 3 },
+            amenities: [
+              "Direct Beach Access",
+              "Ocean View",
+              "Free WiFi",
+              "Kitchen",
+              "Living Area",
+              "Private Terrace",
+              "Beach Equipment",
+            ],
+          },
+          {
+            name: "Beachfront Villa",
+            description:
+              "Private villa with direct beach access, private pool, and personalized service.",
+            priceMultiple: 2.5,
+            bedType: "2 King Beds",
+            sizeRange: [100, 120],
+            capacity: { adults: 6, children: 4 },
+            amenities: [
+              "Beach Access",
+              "Private Pool",
+              "Free WiFi",
+              "Kitchen",
+              "Living Area",
+              "Balcony",
+            ],
+          },
+          {
+            name: "Overwater Bungalow",
+            description:
+              "Unique overwater accommodation with glass floor panels and infinite ocean views.",
+            priceMultiple: 3.2,
+            bedType: "King Bed + Daybed",
+            sizeRange: [80, 100],
+            capacity: { adults: 4, children: 2 },
+            amenities: [
+              "Overwater Location",
+              "Glass Floor",
+              "Private Deck",
+              "Direct Ocean Access",
+              "Free WiFi",
+              "Minibar",
+              "Outdoor Shower",
+              "Snorkeling Equipment",
+            ],
+          },
+        ],
+        mountain: [
+          {
+            name: "Standard Mountain Room",
+            description: "Cozy room with mountain views and rustic charm.",
+            priceMultiple: 1.0,
+            bedType: "Queen Bed",
+            sizeRange: [25, 35],
+            capacity: { adults: 2, children: 1 },
+            amenities: [
+              "Mountain View",
+              "Free WiFi",
+              "Fireplace",
+              "TV",
+              "Safe",
+            ],
+          },
+          {
+            name: "Alpine Suite",
+            description:
+              "Rustic luxury suite with mountain views, fireplace, and premium amenities.",
+            priceMultiple: 1.5,
+            bedType: "King Bed",
+            sizeRange: [45, 60],
+            capacity: { adults: 2, children: 2 },
+            amenities: [
+              "Mountain View",
+              "Fireplace",
+              "Free WiFi",
+              "Minibar",
+              "Safe",
+              "TV",
+              "Balcony",
+            ],
+          },
+          {
+            name: "Mountain Cabin",
+            description:
+              "Cozy cabin with rustic charm, private hot tub, and scenic mountain views.",
+            priceMultiple: 2.0,
+            bedType: "King Bed + Sofa Bed",
+            sizeRange: [70, 90],
+            capacity: { adults: 4, children: 2 },
+            amenities: [
+              "Mountain View",
+              "Hot Tub",
+              "Fireplace",
+              "Free WiFi",
+              "Kitchen",
+              "Living Area",
+            ],
+          },
+          {
+            name: "Lodge Suite",
+            description:
+              "Spacious lodge-style suite with multiple rooms and premium mountain amenities.",
+            priceMultiple: 2.4,
+            bedType: "2 Queen Beds",
+            sizeRange: [90, 110],
+            capacity: { adults: 6, children: 3 },
+            amenities: [
+              "Multiple Rooms",
+              "Mountain View",
+              "Fireplace",
+              "Free WiFi",
+              "Full Kitchen",
+              "Living Area",
+              "Private Deck",
+              "Ski Equipment Storage",
+            ],
+          },
+          {
+            name: "Peak Penthouse",
+            description:
+              "Ultimate mountain luxury with 360-degree views, spa, and private chef service.",
+            priceMultiple: 3.5,
+            bedType: "2 King Beds + Living Area",
+            sizeRange: [150, 200],
+            capacity: { adults: 8, children: 4 },
+            amenities: [
+              "360-Degree Views",
+              "Private Spa",
+              "Private Chef",
+              "Multiple Fireplaces",
+              "Free WiFi",
+              "Full Kitchen",
+              "Multiple Living Areas",
+              "Private Elevator",
+            ],
+          },
+        ],
+      };
+
+      const variants = roomVariants[type];
+      const numRooms = 4 + Math.floor(Math.random() * 2); // 4 or 5 rooms
+      const selectedVariants = variants.slice(0, numRooms);
+
+      return selectedVariants.map((variant, index) => {
+        const roomVideoIndex = (videoIndex + index) % 5;
+        const roomImageIndex = (imageIndex + index) % 4;
+        const roomSize =
+          variant.sizeRange[0] +
+          Math.floor(
+            Math.random() * (variant.sizeRange[1] - variant.sizeRange[0])
+          );
+
+        return {
+          id: `room-${id}-${index + 1}`,
+          name: variant.name,
+          description: variant.description,
+          price: {
+            original: Math.round(
+              basePrice * priceMultiplier * variant.priceMultiple
+            ),
+            discounted: Math.round(
+              (basePrice *
+                priceMultiplier *
+                variant.priceMultiple *
+                (100 - discountPercent)) /
+                100
+            ),
+            currency:
+              location.country === "USA"
+                ? "USD"
+                : location.country === "UK"
+                ? "GBP"
+                : "EUR",
+            discount_percentage: discountPercent,
+          },
+          amenities: variant.amenities,
+          capacity: variant.capacity,
+          bed_type: variant.bedType,
+          size: `${roomSize} m²`,
+          media: [
             {
-              id: `room-${id}-2`,
-              name:
-                type === "luxury"
-                  ? "Executive Suite"
-                  : type === "beach"
-                  ? "Beachfront Villa"
-                  : "Mountain Cabin",
-              description:
-                type === "luxury"
-                  ? "Luxury suite with separate living area, panoramic city views, and premium amenities."
-                  : type === "beach"
-                  ? "Private villa with direct beach access, private pool, and personalized service."
-                  : "Cozy cabin with rustic charm, private hot tub, and scenic mountain views.",
-              price: {
-                original: Math.round(basePrice * priceMultiplier * 1.8),
-                discounted: Math.round(
-                  (basePrice *
-                    priceMultiplier *
-                    1.8 *
-                    (100 - discountPercent)) /
-                    100
-                ),
-                currency:
-                  location.country === "USA"
-                    ? "USD"
-                    : location.country === "UK"
-                    ? "GBP"
-                    : "EUR",
-                discount_percentage: discountPercent,
-              },
-              amenities:
-                type === "luxury"
-                  ? [
-                      "Free WiFi",
-                      "Air Conditioning",
-                      "Minibar",
-                      "Safe",
-                      "TV",
-                      "Coffee Machine",
-                      "Balcony",
-                      "Living Area",
-                    ]
-                  : type === "beach"
-                  ? [
-                      "Beach Access",
-                      "Private Pool",
-                      "Free WiFi",
-                      "Kitchen",
-                      "Living Area",
-                      "Balcony",
-                    ]
-                  : [
-                      "Mountain View",
-                      "Hot Tub",
-                      "Fireplace",
-                      "Free WiFi",
-                      "Kitchen",
-                      "Living Area",
-                    ],
-              capacity: {
-                adults: type === "beach" ? 4 : 3,
-                children: type === "beach" ? 3 : 2,
-              },
-              bed_type:
-                type === "beach" ? "2 King Beds" : "King Bed + Sofa Bed",
-              size: `${60 + Math.floor(Math.random() * 40)} m²`,
-              media: [
-                {
-                  id: `media-${id}-4`,
-                  type: "image" as const,
-                  url: imageSet[(imageIndex + 2) % 4],
-                  thumbnail: imageSet[(imageIndex + 2) % 4].replace(
-                    "w=1470",
-                    "w=400"
-                  ),
-                  alt: `Suite View`,
-                  title: `Suite Overview`,
-                },
-                {
-                  id: `media-${id}-5`,
-                  type: "video" as const,
-                  url: videos[(videoIndex + 1) % 5],
-                  thumbnail: imageSet[(imageIndex + 2) % 4].replace(
-                    "w=1470",
-                    "w=400"
-                  ),
-                  alt: "Suite Tour Video",
-                  title: "Suite Virtual Tour",
-                },
-              ],
-              cancellation_policy: `Free cancellation until ${
-                Math.random() > 0.5 ? "48" : "72"
-              } hours before check-in`,
-              availability: Math.random() > 0.15, // 85% availability
+              id: `media-${id}-${index * 2 + 1}`,
+              type: "image" as const,
+              url: imageSet[roomImageIndex],
+              thumbnail: imageSet[roomImageIndex].replace("w=1470", "w=400"),
+              alt: `${variant.name} Room`,
+              title: `${variant.name} Overview`,
             },
-          ]
-        : []),
-    ],
+            {
+              id: `media-${id}-${index * 2 + 2}`,
+              type: "video" as const,
+              url: videoSet[roomVideoIndex],
+              thumbnail: imageSet[roomImageIndex].replace("w=1470", "w=400"),
+              alt: "Room Tour Video",
+              title: "Virtual Room Tour",
+            },
+          ],
+          // New priority-based media structure
+          video_url:
+            Math.random() > 0.5
+              ? [
+                  videoSet[roomVideoIndex],
+                  ...(Math.random() > 0.7
+                    ? [videoSet[(roomVideoIndex + 1) % 5]]
+                    : []),
+                ]
+              : undefined,
+          room_images: [
+            imageSet[roomImageIndex],
+            imageSet[(roomImageIndex + 1) % 4],
+            ...(Math.random() > 0.6
+              ? [imageSet[(roomImageIndex + 2) % 4]]
+              : []),
+          ],
+          cancellation_policy: `Free cancellation until ${
+            Math.random() > 0.5 ? "24" : index > 2 ? "72" : "48"
+          } hours before check-in`,
+          availability:
+            Math.random() > (index === 0 ? 0.05 : index > 2 ? 0.2 : 0.1), // Higher-tier rooms have slightly lower availability
+        };
+      });
+    })(),
   };
 };
 

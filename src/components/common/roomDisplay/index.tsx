@@ -1,5 +1,13 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Room, MediaItem } from "../../../interface/room.interface";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
+import { Room } from "../../../interface/room.interface";
+
+import OptimizedVideo from "../optimizedVideo";
 
 interface RoomDisplayProps {
   room: Room;
@@ -13,13 +21,6 @@ interface LazyImageProps {
   alt: string;
   className?: string;
   onClick?: () => void;
-}
-
-interface LazyVideoProps {
-  src: string;
-  thumbnail?: string;
-  alt?: string;
-  className?: string;
 }
 
 // Lazy Image Component with Intersection Observer
@@ -83,202 +84,54 @@ const LazyImage: React.FC<LazyImageProps> = ({
   );
 };
 
-// Lazy Video Component with Viewport Detection
-const LazyVideo: React.FC<LazyVideoProps> = ({
-  src,
-  thumbnail,
-  alt,
-  className,
-}) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isInView, setIsInView] = useState(false);
-  const [hasUserInteracted, setHasUserInteracted] = useState(false);
-  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // Intersection Observer for viewport detection
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsInView(entry.isIntersecting);
-
-        // Load video when it comes into view
-        if (entry.isIntersecting && !shouldLoadVideo) {
-          setShouldLoadVideo(true);
-        }
-
-        // Auto-play/pause based on viewport visibility
-        if (videoRef.current && shouldLoadVideo && isLoaded) {
-          if (entry.isIntersecting) {
-            // Autoplay when entering viewport (muted to respect browser policies)
-            videoRef.current.play().catch((error) => {
-              console.log("Autoplay failed:", error);
-              // Autoplay failed, keep showing thumbnail
-              setIsPlaying(false);
-            });
-          } else if (!entry.isIntersecting && !videoRef.current.paused) {
-            // Pause when leaving viewport
-            videoRef.current.pause();
-            setIsPlaying(false);
-          }
-        }
-      },
-      {
-        threshold: 0.5, // Video must be 50% visible
-        rootMargin: "50px", // Start loading 50px before entering viewport
-      }
-    );
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [shouldLoadVideo, hasUserInteracted]);
-
-  // Autoplay when video is loaded and in view
-  useEffect(() => {
-    if (videoRef.current && isLoaded && isInView && shouldLoadVideo) {
-      videoRef.current.play().catch((error) => {
-        console.log("Autoplay on load failed:", error);
-        setIsPlaying(false);
-      });
-    }
-  }, [isLoaded, isInView, shouldLoadVideo]);
-
-  // Handle manual play
-  const handlePlay = useCallback(async () => {
-    setHasUserInteracted(true);
-    setIsPlaying(true);
-
-    if (videoRef.current) {
-      try {
-        await videoRef.current.play();
-      } catch (error) {
-        console.log("Play failed:", error);
-        setIsPlaying(false);
-      }
-    }
-  }, []);
-
-  // Handle manual pause
-  const handlePause = useCallback(() => {
-    setIsPlaying(false);
-    if (videoRef.current) {
-      videoRef.current.pause();
-    }
-  }, []);
-
-  // Handle video events
-  const handleVideoPlay = useCallback(() => {
-    setIsPlaying(true);
-  }, []);
-
-  const handleVideoPause = useCallback(() => {
-    setIsPlaying(false);
-  }, []);
-
-  const handleVideoEnded = useCallback(() => {
-    setIsPlaying(false);
-  }, []);
-
-  return (
-    <div
-      ref={containerRef}
-      className={`relative overflow-hidden w-full h-full block ${className}`}
-    >
-      {!shouldLoadVideo || (!isInView && !isPlaying) ? (
-        <div className="relative">
-          <LazyImage
-            src={
-              thumbnail ||
-              "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiNmM2Y0ZjYiLz48L3N2Zz4="
-            }
-            alt={alt || "Video thumbnail"}
-            className="w-full h-full"
-            onClick={handlePlay}
-          />
-          <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
-            <button
-              onClick={handlePlay}
-              className="bg-white bg-opacity-90 rounded-full p-3 hover:bg-opacity-100 transition-all duration-200 shadow-lg"
-              aria-label="Play video"
-            >
-              <svg
-                className="w-6 h-6 text-gray-800 ml-1"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </button>
-
-            {/* Loading indicator */}
-            {shouldLoadVideo && !isLoaded && (
-              <div className="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded-md text-xs">
-                Loading video...
-              </div>
-            )}
-          </div>
-        </div>
-      ) : (
-        shouldLoadVideo && (
-          <video
-            ref={videoRef}
-            className="w-full h-full object-cover block"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata" // Only load metadata initially
-            onLoadedData={() => setIsLoaded(true)}
-            onPlay={handleVideoPlay}
-            onPause={handleVideoPause}
-            onEnded={handleVideoEnded}
-            onLoadStart={() => console.log("Video loading started")}
-          >
-            <source src={src} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        )
-      )}
-
-      {/* Video controls overlay when playing */}
-      {isPlaying && shouldLoadVideo && (
-        <div className="absolute bottom-4 right-4 flex gap-2">
-          <button
-            onClick={handlePause}
-            className="bg-black bg-opacity-60 text-white p-2 rounded-full hover:bg-opacity-80 transition-all duration-200"
-            aria-label="Pause video"
-          >
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
-        </div>
-      )}
-    </div>
-  );
-};
-
-// Media Gallery Component
-const MediaGallery: React.FC<{ media: MediaItem[] }> = ({ media }) => {
+// Media Gallery Component with Priority: Videos First, then Images
+const MediaGallery: React.FC<{
+  room: Room;
+  roomName: string;
+}> = ({ room, roomName }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [showGallery, setShowGallery] = useState(false);
 
-  if (!media || media.length === 0) return null;
+  // Combined media: videos first, then images - memoized for performance
+  const mediaItems = useMemo(() => {
+    const hasVideos = room.video_url && room.video_url.length > 0;
+    const hasImages = room.room_images && room.room_images.length > 0;
 
-  const currentMedia = media[currentIndex];
+    // Combine videos and images (videos first)
+    let items: Array<{
+      url: string;
+      type: "video" | "image";
+      index: number;
+    }> = [];
+
+    if (hasVideos) {
+      // Add all videos first
+      items = room.video_url!.map((url, index) => ({
+        url,
+        type: "video" as const,
+        index,
+      }));
+    }
+
+    if (hasImages) {
+      // Add all images after videos
+      const imageItems = room.room_images!.map((url, index) => ({
+        url,
+        type: "image" as const,
+        index,
+      }));
+      items = [...items, ...imageItems];
+    }
+
+    return items;
+  }, [room.video_url, room.room_images]);
+
+  // Don't show anything if no media
+  if (mediaItems.length === 0) return null;
+
+  const hasVideos = room.video_url && room.video_url.length > 0;
+  const hasImages = room.room_images && room.room_images.length > 0;
+
+  const currentMedia = mediaItems[currentIndex];
 
   return (
     <div className="relative w-full block">
@@ -287,26 +140,29 @@ const MediaGallery: React.FC<{ media: MediaItem[] }> = ({ media }) => {
         {currentMedia.type === "image" ? (
           <LazyImage
             src={currentMedia.url}
-            alt={currentMedia.alt || "Room image"}
+            alt={`${roomName} image ${currentMedia.index + 1}`}
             className="w-full h-full"
-            onClick={() => setShowGallery(true)}
           />
         ) : (
-          <LazyVideo
+          <OptimizedVideo
             src={currentMedia.url}
-            thumbnail={currentMedia.thumbnail}
-            alt={currentMedia.alt}
-            className="w-full h-full"
+            thumbnail={undefined} // No thumbnail for direct video URLs
+            alt={`${roomName} video tour ${currentMedia.index + 1}`}
+            className="w-full h-full rounded-t-xl"
+            autoPlay={true}
+            respectDataSaver={true}
+            loadingDistance={250}
+            playVisibility={0.2}
           />
         )}
       </div>
 
       {/* Media Navigation */}
-      {media.length > 1 && (
+      {mediaItems.length > 1 && (
         <div className="flex justify-center mt-4 space-x-2">
-          {media.map((item, index) => (
+          {mediaItems.map((item, index) => (
             <button
-              key={item.id}
+              key={`${item.type}-${index}`}
               onClick={() => setCurrentIndex(index)}
               className={`w-3 h-3 rounded-full transition-colors duration-200 ${
                 index === currentIndex
@@ -321,13 +177,24 @@ const MediaGallery: React.FC<{ media: MediaItem[] }> = ({ media }) => {
 
       {/* Media Counter */}
       <div className="absolute top-2 right-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded-md text-sm">
-        {currentIndex + 1} / {media.length}
+        {currentIndex + 1} / {mediaItems.length}
       </div>
 
       {/* Media Type Badge */}
       <div className="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded-md text-xs font-medium">
-        {currentMedia.type === "video" ? "🎥 Video" : "📸 Photo"}
+        {hasVideos && hasImages
+          ? "🎥📸 Videos & Images"
+          : hasVideos
+          ? "🎥 Videos Only"
+          : "📸 Images Only"}
       </div>
+
+      {/* Priority Indicator */}
+      {hasVideos && (
+        <div className="absolute bottom-2 right-2 bg-green-600 text-white px-2 py-1 rounded-md text-xs">
+          Video Priority
+        </div>
+      )}
     </div>
   );
 };
@@ -361,7 +228,7 @@ const RoomDisplay: React.FC<RoomDisplayProps> = ({
       {/* Media Gallery - Full Width */}
       <div className="relative w-full">
         <div className="w-full">
-          <MediaGallery media={room.media} />
+          <MediaGallery room={room} roomName={room.name} />
         </div>
 
         {/* Availability Badge */}

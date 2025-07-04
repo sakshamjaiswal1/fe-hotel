@@ -1,5 +1,4 @@
-
-import InfiniteRoomList from "@/components/home/infiniteRoomList";
+import InfiniteRoomList from "@/components/home/hotelList";
 
 function Home() {
   return (

@@ -25,6 +25,8 @@ export interface Room {
   bed_type: string;
   size: string;
   media: MediaItem[];
+  video_url?: string[]; // New: Array of video URLs (priority 1)
+  room_images?: string[]; // New: Array of image URLs (priority 2)
   cancellation_policy: string;
   availability: boolean;
 }
