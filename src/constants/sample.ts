@@ -455,7 +455,7 @@ const createHotel = (
           ],
           // New priority-based media structure
           video_url:
-            Math.random() > 0.5
+            Math.random() > 0.8
               ? [
                   videoSet[roomVideoIndex],
                   ...(Math.random() > 0.7
