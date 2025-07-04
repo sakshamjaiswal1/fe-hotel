@@ -2,20 +2,19 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loadSampleData } from "../../../redux/sampleData/action";
 import {
-  selectSampleData,
+  selectAllRooms,
   selectSampleDataLoading,
-  selectRoomsBySerialNo,
-  selectHotelDetails,
+  selectAllHotels,
 } from "../../../redux/sampleData/selectors";
-import RoomCard from "../roomCard";
-import { Room, RoomBySerialNo } from "../../../interface/room.interface";
+
+import { Room } from "../../../interface/room.interface";
+import RoomDisplay from "@/components/common/roomDisplay";
 
 const InfiniteRoomList: React.FC = () => {
   const dispatch = useDispatch();
-  const sampleData = useSelector(selectSampleData);
+  const allRooms = useSelector(selectAllRooms);
+  const allHotels = useSelector(selectAllHotels);
   const loading = useSelector(selectSampleDataLoading);
-  const roomsBySerialNo = useSelector(selectRoomsBySerialNo);
-  const hotelDetails = useSelector(selectHotelDetails);
 
   const [displayedRooms, setDisplayedRooms] = useState<Room[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -26,24 +25,10 @@ const InfiniteRoomList: React.FC = () => {
 
   // Load initial data
   useEffect(() => {
-    if (!sampleData) {
-      dispatch(loadSampleData());
+    if (allHotels.length === 0) {
+      dispatch(loadSampleData() as any);
     }
-  }, [dispatch, sampleData]);
-
-  // Flatten all rooms from roomsBySerialNo
-  const allRooms = React.useMemo(() => {
-    if (!roomsBySerialNo || roomsBySerialNo.length === 0) return [];
-
-    const flattenedRooms: Room[] = [];
-    roomsBySerialNo.forEach((roomGroup: RoomBySerialNo) => {
-      if (roomGroup.rooms && Array.isArray(roomGroup.rooms)) {
-        flattenedRooms.push(...roomGroup.rooms);
-      }
-    });
-
-    return flattenedRooms;
-  }, [roomsBySerialNo]);
+  }, [dispatch, allHotels.length]);
 
   // Load more rooms
   const loadMoreRooms = useCallback(() => {
@@ -95,16 +80,7 @@ const InfiniteRoomList: React.FC = () => {
     // Add your room selection logic here
   };
 
-  const getRandomImage = () => {
-    const images = [
-      "https://images.unsplash.com/photo-1618773928121-c32242e63f39?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-      "https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1474&q=80",
-      "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-      "https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1480&q=80",
-      "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-    ];
-    return images[Math.floor(Math.random() * images.length)];
-  };
+  const currentHotel = allHotels.length > 0 ? allHotels[0] : null;
 
   if (loading && displayedRooms.length === 0) {
     return (
@@ -148,26 +124,32 @@ const InfiniteRoomList: React.FC = () => {
           </div>
 
           {/* Hotel Info */}
-          {hotelDetails && (
+          {currentHotel && (
             <div className="border-t pt-4">
               <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                {hotelDetails.name}
+                {currentHotel.name}
               </h2>
               <p className="text-gray-600 mb-3">
-                {hotelDetails.address.city}, {hotelDetails.address.country}
+                {currentHotel.address.city}, {currentHotel.address.country}
               </p>
               <div className="flex items-center gap-4">
                 <div className="flex items-center">
                   <span className="text-yellow-400">⭐</span>
                   <span className="ml-1 text-sm font-medium">
-                    {hotelDetails.properties.star_rating} Star
+                    {currentHotel.star_rating} Star
                   </span>
                 </div>
-                <div className="text-sm text-gray-600">
-                  {hotelDetails.properties.budget}
+                <div className="flex items-center">
+                  <span className="text-yellow-400">📊</span>
+                  <span className="ml-1 text-sm font-medium">
+                    {currentHotel.rating}/5 Rating
+                  </span>
                 </div>
                 <div className="text-sm text-green-600 font-medium">
-                  ✓ Free cancellation
+                  ✓{" "}
+                  {currentHotel.amenities.includes("Free WiFi")
+                    ? "Free WiFi"
+                    : "Premium amenities"}
                 </div>
               </div>
             </div>
@@ -177,20 +159,24 @@ const InfiniteRoomList: React.FC = () => {
 
       {/* Room Cards Grid */}
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {displayedRooms.map((room, index) => (
-            <RoomCard
-              key={`${room.room_type_code}-${index}`}
-              name={room.name}
-              imageUrl={getRandomImage()}
-              bedType="Double bed"
-              occupancy="Upto 2 adults"
-              originalPrice={hotelDetails?.price_info.total_price || 357}
-              discountedPrice={hotelDetails?.price_info.discounted_price || 257}
-              discountPercentage={28}
-              currency={hotelDetails?.price_info.unit || "EUR"}
-              cancellationPolicy="Cancellation policy"
-              onSelect={() => handleRoomSelect(room)}
+        {/* Total Rooms Count */}
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+            Available Rooms
+          </h2>
+          <p className="text-gray-600">
+            {allRooms.length} rooms available across {allHotels.length}{" "}
+            {allHotels.length === 1 ? "hotel" : "hotels"}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {displayedRooms.map((room) => (
+            <RoomDisplay
+              key={room.id}
+              room={room}
+              onSelect={handleRoomSelect}
+              className="transform hover:scale-105 transition-transform duration-200"
             />
           ))}
         </div>
@@ -203,10 +189,22 @@ const InfiniteRoomList: React.FC = () => {
           </div>
         )}
 
+        {/* Load More Button */}
+        {!isLoadingMore && hasMore && displayedRooms.length > 0 && (
+          <div className="flex justify-center mt-8">
+            <button
+              onClick={loadMoreRooms}
+              className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium"
+            >
+              Load More Rooms
+            </button>
+          </div>
+        )}
+
         {/* No More Rooms Message */}
         {!hasMore && displayedRooms.length > 0 && (
           <div className="text-center py-8">
-            <p className="text-gray-500">No more rooms to load</p>
+            <p className="text-gray-500">All rooms loaded</p>
             <p className="text-sm text-gray-400">
               Showing {displayedRooms.length} of {allRooms.length} rooms
             </p>
@@ -214,9 +212,13 @@ const InfiniteRoomList: React.FC = () => {
         )}
 
         {/* No Rooms Available */}
-        {!loading && displayedRooms.length === 0 && (
+        {!loading && allRooms.length === 0 && (
           <div className="text-center py-16">
-            <p className="text-gray-500 text-lg">No rooms available</p>
+            <div className="text-gray-400 text-6xl mb-4">🏨</div>
+            <p className="text-gray-500 text-lg mb-2">No rooms available</p>
+            <p className="text-gray-400">
+              Please check back later or adjust your search criteria
+            </p>
           </div>
         )}
       </div>

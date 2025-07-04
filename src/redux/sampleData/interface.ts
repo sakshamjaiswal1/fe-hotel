@@ -1,7 +1,7 @@
-import { SampleData } from "../../interface/sample.interface";
+import { Hotel } from "../../interface/room.interface";
 
-export interface ISampleDataState {
-  isLoading: boolean;
-  error: string;
-  data: SampleData | null;
+export interface SampleDataState {
+  data: Hotel[] | null;
+  loading: boolean;
+  error: string | null;
 }
