@@ -1,73 +1,72 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { sampleData } from "../../constants/sample";
-import { SampleData } from "../../interface/sample.interface";
-import { ISampleDataState } from "./interface";
+import {
+  SampleDataActionTypes,
+  LOAD_SAMPLE_DATA_REQUEST,
+  LOAD_SAMPLE_DATA_SUCCESS,
+  LOAD_SAMPLE_DATA_FAILURE,
+} from "./action";
+import { SampleDataState } from "./interface";
 
-export const initialState: ISampleDataState = {
-  isLoading: false,
-  error: "",
+const initialState: SampleDataState = {
   data: null,
+  loading: false,
+  error: null,
 };
 
-export const sampleDataSlice = createSlice({
-  name: "sampleData",
-  initialState,
-  reducers: {
-    setSampleData: (state, { payload }: PayloadAction<SampleData>) => {
+const sampleDataReducer = (
+  state = initialState,
+  action: SampleDataActionTypes
+): SampleDataState => {
+  switch (action.type) {
+    case LOAD_SAMPLE_DATA_REQUEST:
       return {
         ...state,
-        isLoading: false,
-        error: "",
-        data: payload,
+        loading: true,
+        error: null,
       };
-    },
-    loadSampleData: (state) => {
+
+    case LOAD_SAMPLE_DATA_SUCCESS:
       return {
         ...state,
-        isLoading: false,
-        error: "",
-        data: sampleData,
+        loading: false,
+        data: action.payload,
+        error: null,
       };
-    },
-    setSampleDataLoadingStart: (state) => {
+
+    case LOAD_SAMPLE_DATA_FAILURE:
       return {
         ...state,
-        isLoading: true,
-        error: "",
+        loading: false,
+        error: action.payload,
       };
-    },
-    setSampleDataLoadingEnd: (state) => {
-      return {
-        ...state,
-        isLoading: false,
-      };
-    },
-    setSampleDataError: (state, { payload }: PayloadAction<string>) => {
-      return {
-        ...state,
-        isLoading: false,
-        error: payload,
-        data: null,
-      };
-    },
-    resetSampleData: (state) => {
-      return {
-        ...state,
-        isLoading: false,
-        error: "",
-        data: null,
-      };
-    },
-  },
+
+    default:
+      return state;
+  }
+};
+
+// Action creators for compatibility
+export const setSampleData = (data: any) => ({
+  type: LOAD_SAMPLE_DATA_SUCCESS,
+  payload: data,
 });
 
-export const {
-  setSampleData,
-  loadSampleData,
-  setSampleDataLoadingStart,
-  setSampleDataLoadingEnd,
-  setSampleDataError,
-  resetSampleData,
-} = sampleDataSlice.actions;
+export const setSampleDataLoadingStart = () => ({
+  type: LOAD_SAMPLE_DATA_REQUEST,
+});
 
-export default sampleDataSlice.reducer;
+export const setSampleDataLoadingEnd = () => ({
+  type: LOAD_SAMPLE_DATA_SUCCESS,
+  payload: [],
+});
+
+export const setSampleDataError = (error: string) => ({
+  type: LOAD_SAMPLE_DATA_FAILURE,
+  payload: error,
+});
+
+export const resetSampleData = () => ({
+  type: LOAD_SAMPLE_DATA_SUCCESS,
+  payload: null,
+});
+
+export default sampleDataReducer;
