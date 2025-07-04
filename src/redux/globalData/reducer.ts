@@ -119,4 +119,14 @@ export const globalDataSlice = createSlice({
   },
 });
 
+// Export actions
+export const {
+  setGlobalData,
+  globalDataGetFail,
+  resetGlobalData,
+  setGLobalDataLoadingStart,
+  setGLobalDataLoadingEnd,
+  setGLobalMobileData,
+} = globalDataSlice.actions;
+
 export default globalDataSlice.reducer;

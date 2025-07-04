@@ -482,14 +482,14 @@ const createHotel = (
 };
 
 export const hotelsData: Hotel[] = [
-  // Luxury Hotels (1-20)
-  ...Array.from({ length: 20 }, (_, i) => createHotel(i + 1, "luxury", 350)),
+  // Luxury Hotels (1-37)
+  ...Array.from({ length: 37 }, (_, i) => createHotel(i + 1, "luxury", 350)),
 
-  // Beach Resorts (21-40)
-  ...Array.from({ length: 20 }, (_, i) => createHotel(i + 21, "beach", 450)),
+  // Beach Resorts (38-74)
+  ...Array.from({ length: 37 }, (_, i) => createHotel(i + 38, "beach", 450)),
 
-  // Mountain Lodges (41-60)
-  ...Array.from({ length: 20 }, (_, i) => createHotel(i + 41, "mountain", 520)),
+  // Mountain Lodges (75-110)
+  ...Array.from({ length: 36 }, (_, i) => createHotel(i + 75, "mountain", 520)),
 ];
 
 export default hotelsData;
