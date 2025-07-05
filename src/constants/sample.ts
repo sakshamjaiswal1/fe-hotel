@@ -1,5 +1,18 @@
 import { Hotel } from "../interface/room.interface";
 
+// Helper function to generate responsive images with srcset
+const generateResponsiveImage = (baseUrl: string, alt: string = "") => {
+  // Extract the base URL without width parameter
+  const baseUrlWithoutWidth = baseUrl.replace(/&w=\d+/, "");
+
+  return {
+    src: `${baseUrlWithoutWidth}&w=800`, // Default/fallback image
+    srcset: `${baseUrlWithoutWidth}&w=400 400w, ${baseUrlWithoutWidth}&w=800 800w, ${baseUrlWithoutWidth}&w=1200 1200w`,
+    sizes: "(max-width: 600px) 400px, (max-width: 1000px) 800px, 1200px",
+    alt,
+  };
+};
+
 const createHotel = (
   id: number,
   type: "luxury" | "beach" | "mountain",
@@ -455,7 +468,7 @@ const createHotel = (
           ],
           // New priority-based media structure
           video_url:
-            Math.random() > 0.5
+            Math.random() > 0.9
               ? [
                   videoSet[roomVideoIndex],
                   ...(Math.random() > 0.7
@@ -464,10 +477,21 @@ const createHotel = (
                 ]
               : undefined,
           room_images: [
-            imageSet[roomImageIndex],
-            imageSet[(roomImageIndex + 1) % 4],
+            generateResponsiveImage(
+              imageSet[roomImageIndex],
+              `${variant.name} Room`
+            ),
+            generateResponsiveImage(
+              imageSet[(roomImageIndex + 1) % 4],
+              `${variant.name} Room View`
+            ),
             ...(Math.random() > 0.6
-              ? [imageSet[(roomImageIndex + 2) % 4]]
+              ? [
+                  generateResponsiveImage(
+                    imageSet[(roomImageIndex + 2) % 4],
+                    `${variant.name} Room Interior`
+                  ),
+                ]
               : []),
           ],
           cancellation_policy: `Free cancellation until ${
@@ -482,14 +506,14 @@ const createHotel = (
 };
 
 export const hotelsData: Hotel[] = [
-  // Luxury Hotels (1-20)
-  ...Array.from({ length: 20 }, (_, i) => createHotel(i + 1, "luxury", 350)),
+  // Luxury Hotels (1-37)
+  ...Array.from({ length: 37 }, (_, i) => createHotel(i + 1, "luxury", 350)),
 
-  // Beach Resorts (21-40)
-  ...Array.from({ length: 20 }, (_, i) => createHotel(i + 21, "beach", 450)),
+  // Beach Resorts (38-74)
+  ...Array.from({ length: 37 }, (_, i) => createHotel(i + 38, "beach", 450)),
 
-  // Mountain Lodges (41-60)
-  ...Array.from({ length: 20 }, (_, i) => createHotel(i + 41, "mountain", 520)),
+  // Mountain Lodges (75-110)
+  ...Array.from({ length: 36 }, (_, i) => createHotel(i + 75, "mountain", 520)),
 ];
 
 export default hotelsData;

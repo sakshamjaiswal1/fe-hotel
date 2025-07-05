@@ -16,7 +16,7 @@ function TopBar({
   return (
     <section className="pl-[17px] pr-[24px] flex items-center justify-between pt-[21px]">
       <div className="flex items-center gap-x-[8px]">
-        <img src={logoUrl} alt="logo" className="h-12 w-12" />
+        <img src={logoUrl} alt="logo" className="h-12 w-12" loading="eager" />
         <div>
           <h3 className=" text-[#000000] text-[18px] font-[600] leading-[24px] tracking-[0.18px]">
             {title}

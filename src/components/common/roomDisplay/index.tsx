@@ -18,6 +18,8 @@ interface RoomDisplayProps {
 
 interface LazyImageProps {
   src: string;
+  srcset?: string;
+  sizes?: string;
   alt: string;
   className?: string;
   onClick?: () => void;
@@ -26,6 +28,8 @@ interface LazyImageProps {
 // Lazy Image Component with Intersection Observer
 const LazyImage: React.FC<LazyImageProps> = ({
   src,
+  srcset,
+  sizes,
   alt,
   className,
   onClick,
@@ -63,6 +67,8 @@ const LazyImage: React.FC<LazyImageProps> = ({
             ? src
             : "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMSIgaGVpZ2h0PSIxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiNmM2Y0ZjYiLz48L3N2Zz4="
         }
+        srcSet={isInView ? srcset : undefined}
+        sizes={isInView ? sizes : undefined}
         alt={alt}
         className={`w-full h-full object-cover transition-opacity duration-300 block ${
           isLoaded ? "opacity-100" : "opacity-0"
@@ -92,15 +98,17 @@ const MediaGallery: React.FC<{
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // Combined media: videos first, then images - memoized for performance
-  const mediaItems = useMemo(() => {
-    const hasVideos = room.video_url && room.video_url.length > 0;
-    const hasImages = room.room_images && room.room_images.length > 0;
+  const hasVideos = room.video_url && room.video_url.length > 0;
+  const hasImages = room.room_images && room.room_images.length > 0;
 
+  const mediaItems = useMemo(() => {
     // Combine videos and images (videos first)
     let items: Array<{
       url: string;
       type: "video" | "image";
       index: number;
+      srcset?: string;
+      sizes?: string;
     }> = [];
 
     if (hasVideos) {
@@ -113,11 +121,12 @@ const MediaGallery: React.FC<{
     }
 
     if (hasImages) {
-      // Add all images after videos
-      const imageItems = room.room_images!.map((url, index) => ({
-        url,
+      const imageItems = room.room_images!.map((responsiveImg, index) => ({
+        url: responsiveImg.src,
         type: "image" as const,
         index,
+        srcset: responsiveImg.srcset,
+        sizes: responsiveImg.sizes,
       }));
       items = [...items, ...imageItems];
     }
@@ -128,9 +137,6 @@ const MediaGallery: React.FC<{
   // Don't show anything if no media
   if (mediaItems.length === 0) return null;
 
-  const hasVideos = room.video_url && room.video_url.length > 0;
-  const hasImages = room.room_images && room.room_images.length > 0;
-
   const currentMedia = mediaItems[currentIndex];
 
   return (
@@ -140,6 +146,8 @@ const MediaGallery: React.FC<{
         {currentMedia.type === "image" ? (
           <LazyImage
             src={currentMedia.url}
+            srcset={currentMedia.srcset}
+            sizes={currentMedia.sizes}
             alt={`${roomName} image ${currentMedia.index + 1}`}
             className="w-full h-full"
           />

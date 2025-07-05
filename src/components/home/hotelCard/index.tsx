@@ -21,6 +21,8 @@ const HotelCard: React.FC<HotelCardProps> = React.memo(
         type: "video" | "image";
         roomName: string;
         index: number;
+        srcset?: string;
+        sizes?: string;
       }> = [];
 
       // Collect all videos first
@@ -37,24 +39,22 @@ const HotelCard: React.FC<HotelCardProps> = React.memo(
         }
       });
 
-      // Then collect all images
+      // Then collect all images with responsive support
       hotel.rooms.forEach((room) => {
         if (room.room_images && room.room_images.length > 0) {
-          room.room_images.forEach((url, index) => {
+          room.room_images.forEach((responsiveImg, index) => {
             mediaItems.push({
-              url,
+              url: responsiveImg.src,
               type: "image",
               roomName: room.name,
               index,
+              srcset: responsiveImg.srcset,
+              sizes: responsiveImg.sizes,
             });
           });
         }
         // Fallback to media array if no room_images
-        if (
-          (!room.room_images || room.room_images.length === 0) &&
-          room.media &&
-          room.media.length > 0
-        ) {
+        else if (room.media && room.media.length > 0) {
           room.media.forEach((media) => {
             if (media.type === "image") {
               mediaItems.push({
@@ -133,11 +133,14 @@ const HotelCard: React.FC<HotelCardProps> = React.memo(
           {currentMedia.type === "image" ? (
             <img
               src={currentMedia.url}
+              srcSet={currentMedia.srcset}
+              sizes={currentMedia.sizes}
               alt={`${hotel.name} - ${currentMedia.roomName}`}
               className={`w-full h-full object-cover transition-all duration-300 ${
                 imageLoaded ? "opacity-100 scale-100" : "opacity-0 scale-105"
               }`}
               onLoad={() => setImageLoaded(true)}
+              loading="lazy"
             />
           ) : (
             <OptimizedVideo
@@ -222,11 +225,6 @@ const HotelCard: React.FC<HotelCardProps> = React.memo(
                 {hotel.rating.toFixed(1)}
               </span>
             </div>
-          </div>
-
-          {/* Available Rooms Badge */}
-          <div className="absolute bottom-4 left-4 bg-green-600 text-white px-3 py-1 rounded-lg text-sm font-medium z-10">
-            {availableRoomsCount} rooms available
           </div>
         </div>
 
