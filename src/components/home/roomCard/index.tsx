@@ -3,6 +3,8 @@ import React from "react";
 interface RoomCardProps {
   name: string;
   imageUrl: string;
+  srcset?: string;
+  sizes?: string;
   bedType: string;
   occupancy: string;
   originalPrice: number;
@@ -16,6 +18,8 @@ interface RoomCardProps {
 const RoomCard: React.FC<RoomCardProps> = ({
   name,
   imageUrl,
+  srcset,
+  sizes,
   bedType,
   occupancy,
   originalPrice,
@@ -28,7 +32,14 @@ const RoomCard: React.FC<RoomCardProps> = ({
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow duration-300">
       <div className="relative w-full h-48">
-        <img src={imageUrl} alt={name} className="w-full h-full object-cover" />
+        <img
+          src={imageUrl}
+          srcSet={srcset}
+          sizes={sizes}
+          alt={name}
+          className="w-full h-full object-cover"
+          loading="lazy"
+        />
       </div>
 
       <div className="p-4">

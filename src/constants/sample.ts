@@ -1,5 +1,18 @@
 import { Hotel } from "../interface/room.interface";
 
+// Helper function to generate responsive images with srcset
+const generateResponsiveImage = (baseUrl: string, alt: string = "") => {
+  // Extract the base URL without width parameter
+  const baseUrlWithoutWidth = baseUrl.replace(/&w=\d+/, "");
+
+  return {
+    src: `${baseUrlWithoutWidth}&w=800`, // Default/fallback image
+    srcset: `${baseUrlWithoutWidth}&w=400 400w, ${baseUrlWithoutWidth}&w=800 800w, ${baseUrlWithoutWidth}&w=1200 1200w`,
+    sizes: "(max-width: 600px) 400px, (max-width: 1000px) 800px, 1200px",
+    alt,
+  };
+};
+
 const createHotel = (
   id: number,
   type: "luxury" | "beach" | "mountain",
@@ -455,7 +468,7 @@ const createHotel = (
           ],
           // New priority-based media structure
           video_url:
-            Math.random() > 0.8
+            Math.random() > 0.9
               ? [
                   videoSet[roomVideoIndex],
                   ...(Math.random() > 0.7
@@ -464,10 +477,21 @@ const createHotel = (
                 ]
               : undefined,
           room_images: [
-            imageSet[roomImageIndex],
-            imageSet[(roomImageIndex + 1) % 4],
+            generateResponsiveImage(
+              imageSet[roomImageIndex],
+              `${variant.name} Room`
+            ),
+            generateResponsiveImage(
+              imageSet[(roomImageIndex + 1) % 4],
+              `${variant.name} Room View`
+            ),
             ...(Math.random() > 0.6
-              ? [imageSet[(roomImageIndex + 2) % 4]]
+              ? [
+                  generateResponsiveImage(
+                    imageSet[(roomImageIndex + 2) % 4],
+                    `${variant.name} Room Interior`
+                  ),
+                ]
               : []),
           ],
           cancellation_policy: `Free cancellation until ${

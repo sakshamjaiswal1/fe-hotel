@@ -7,6 +7,13 @@ export interface MediaItem {
   title?: string;
 }
 
+export interface ResponsiveImage {
+  src: string;
+  srcset: string;
+  sizes: string;
+  alt?: string;
+}
+
 export interface Room {
   id: string;
   name: string;
@@ -26,7 +33,7 @@ export interface Room {
   size: string;
   media: MediaItem[];
   video_url?: string[]; // New: Array of video URLs (priority 1)
-  room_images?: string[]; // New: Array of image URLs (priority 2)
+  room_images?: ResponsiveImage[]; // New: Array of responsive images with srcset
   cancellation_policy: string;
   availability: boolean;
 }

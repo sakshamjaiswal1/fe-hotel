@@ -23,6 +23,8 @@ const HotelRoomCard: React.FC<HotelRoomCardProps> = ({
       url: string;
       type: "video" | "image";
       index: number;
+      srcset?: string;
+      sizes?: string;
     }> = [];
 
     if (room.video_url && room.video_url.length > 0) {
@@ -37,10 +39,12 @@ const HotelRoomCard: React.FC<HotelRoomCardProps> = ({
 
     if (room.room_images && room.room_images.length > 0) {
       mediaItems.push(
-        ...room.room_images.map((url, index) => ({
-          url,
+        ...room.room_images.map((responsiveImg, index) => ({
+          url: responsiveImg.src,
           type: "image" as const,
           index,
+          srcset: responsiveImg.srcset,
+          sizes: responsiveImg.sizes,
         }))
       );
     }
@@ -79,10 +83,13 @@ const HotelRoomCard: React.FC<HotelRoomCardProps> = ({
           {currentMedia.type === "image" ? (
             <img
               src={currentMedia.url}
+              srcSet={currentMedia.srcset}
+              sizes={currentMedia.sizes}
               alt={`${room.name} - ${currentMedia.type} ${
                 currentMedia.index + 1
               }`}
               className="w-full h-full object-cover"
+              loading="lazy"
             />
           ) : (
             <OptimizedVideo
